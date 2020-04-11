@@ -14,6 +14,8 @@ namespace Normal.Realtime.Examples {
         private float offsetz = -10f;
 
         GameObject m_MainCamera;
+        GameObject m_Canvas;
+        GameObject m_EventSystem;
 
         // Movement Sensitivity Settings
         float mainSpeed = 10.0f; //regular speed
@@ -29,7 +31,7 @@ namespace Normal.Realtime.Examples {
             _realtimeTransform = GetComponent<RealtimeTransform>();
         }
 
-        private bool isCameraParented = false;
+        private bool areObjectsParented = false;
 
         private void Update() {
             // If this CubePlayer prefab is not owned by this client, bail.
@@ -37,14 +39,19 @@ namespace Normal.Realtime.Examples {
                 return;
 
             // Move the camera
-            if (!isCameraParented) {
+            if (!areObjectsParented) {
                 m_MainCamera = Camera.main.gameObject;
                 m_MainCamera.transform.parent = transform;
                 Vector3 offset = new Vector3(offsetx, offsety, offsetz);
                 m_MainCamera.transform.position = transform.position + offset;
                 m_MainCamera.transform.LookAt(transform);
 
-                isCameraParented = true;
+                m_Canvas = GameObject.Find("PlayerCanvas");
+                m_EventSystem = GameObject.Find("PlayerEventSystem");
+                m_Canvas.transform.parent = transform;
+                m_EventSystem.transform.parent = transform;
+
+                areObjectsParented = true;
             }
 
             // Make sure we own the transform so that RealtimeTransform knows to use this client's transform to synchronize remote clients.
